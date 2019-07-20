@@ -15,6 +15,10 @@ def logs():
 
     return render_template('index.html', error='Wrong username/password.')
 
+@app.route('/registration', methods=['GET'])
+def register():
+    return render_template('registration.html')
+
 @app.route('/post', methods=['GET', 'POST'])
 def apiPost():
     if request.method == 'POST':
