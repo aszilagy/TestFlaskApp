@@ -1,4 +1,9 @@
 from flask import Flask, render_template, request, abort, redirect, url_for
+from time import time
+import subprocess, os, sys
+import requests
+import json
+
 app = Flask(__name__)
 
 #FIXME: Move this to mongodb or similar DB
@@ -46,6 +51,24 @@ def createAccount():
 @app.route('/registration', methods=['GET'])
 def register():
     return render_template('registration.html')
+
+@app.route('/getStatus/<server_name>', methods=['GET','POST'])
+def getStatus(server_name):
+    servers = {'gcom':'https://www.grainger.com', 'grainger':'https://www.grainger.com'}
+    checkServer = servers.get(server_name, 'default')
+    
+    if checkServer == 'default':
+        return 'No Server Found by that name'
+    start = time()
+    response = requests.get(checkServer)
+    totalTime = time() - start
+    print(response, totalTime)
+
+    return {'web_server': checkServer, 'response': str(response.status_code), 'response_time_ms': round(totalTime, 4)}
+
+@app.route('/getUser/<int:user_id>', methods=['GET','POST'])
+def getUser(user_id):
+    return str(user_id)
 
 @app.route('/post', methods=['GET', 'POST'])
 def apiPost():
